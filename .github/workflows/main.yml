@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    env:
+      GitHubMail: "rokibhasansagar2014@outlook.com"
+      GitHubName: "rokibhasansagar"
+      SecretMirrorTool: "lzzy12_python-aria-mirror-bot"
+      SecretBranch: "production"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: rokibhasansagar/slimhub_actions@main
+
+      - name: cloning repo
+        continue-on-error: true
+        run: |
+          git config --global user.email $GitHubMail
+          git config --global user.name $GitHubName
+          git config --global credential.helper store
+          git config --global color.ui true
+          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/$GitHubName/$SecretMirrorTool -b $SecretBranch source
+
+      - name: compilation
+        continue-on-error: true
+        run: |
+          cd source
+          docker container prune --force
+          docker build . -t mirror-bot
+
+      - name: running Docker
+        timeout-minutes: 320
+        continue-on-error: true
+        run: |
+          docker run mirror-bot
+
+      - name: Loop workflow
+        continue-on-error: true
+        run: |
+          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/rokibhasansagar/TGMirrorLooper loop
+          cd loop
+          echo $(( RANDOM - ( RANDOM % RANDOM ) )) > looper.txt
+          git add looper.txt
+          git commit -as -m "Looping at $(date -u +%s)"
+          git push origin main
