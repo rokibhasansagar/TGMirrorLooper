@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [ main ]
+    paths-ignore: 'README.md'
   workflow_dispatch:
 
 jobs:
@@ -43,6 +44,7 @@ jobs:
           docker build . -t mirror-bot
 
       - name: running Docker
+        continue-on-error: true
         timeout-minutes: 320
         run: |
           docker run mirror-bot
