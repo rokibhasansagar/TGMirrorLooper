@@ -12,8 +12,6 @@ jobs:
     env:
       GitHubMail: "rokibhasansagar2014@outlook.com"
       GitHubName: "rokibhasansagar"
-      SecretMirrorTool: "lzzy12_python-aria-mirror-bot"
-      SecretBranch: "production"
 
     steps:
       - uses: actions/checkout@v2
@@ -26,12 +24,14 @@ jobs:
 
       - name: cloning repo
         run: |
+          git config --global user.email $GitHubMail
+          git config --global user.name $GitHubName
           expect -c "
-          spawn git clone https://github.com/$GitHubName/$SecretMirrorTool -b $SecretBranch source
+          spawn git clone https://github.com/$GitHubName/${{ secrets.MIRROR_TOOL }} -b production source
           expect \"Username\"        
           send \"${GitHubName}\r\"
           expect \"Password\"        
-          send \"${{ secrets.GITHUB_TOKEN }}\r\"
+          send \"${{ secrets.GH_TOKEN }}\r\"
           set timeout -1
           catch wait result
           interact"
@@ -44,14 +44,13 @@ jobs:
 
       - name: running Docker
         timeout-minutes: 320
-        continue-on-error: true
         run: |
           docker run mirror-bot
 
       - name: Loop workflow
         continue-on-error: true
         run: |
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/rokibhasansagar/TGMirrorLooper loop
+          git clone https://${{ secrets.GH_TOKEN }}@github.com/$GitHubName/TGMirrorLooper loop
           cd loop
           echo $(( RANDOM - ( RANDOM % RANDOM ) )) > looper.txt
           git add looper.txt
@@ -61,7 +60,7 @@ jobs:
           expect \"Username\"        
           send \"${GitHubName}\r\"
           expect \"Password\"        
-          send \"${{ secrets.GITHUB_TOKEN }}\r\"
+          send \"${{ secrets.GH_TOKEN }}\r\"
           expect \"main -> main\"
           set timeout -10
           interact"
