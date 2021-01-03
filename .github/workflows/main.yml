@@ -40,7 +40,7 @@ jobs:
           docker image ls
       - name: Run The Mirroring Docker Container
         continue-on-error: true
-        timeout-minutes: 2
+        timeout-minutes: 340
         run: |
           docker run --privileged --rm -i mirror-bot
       - name: Self Checkout, Again For Looping
@@ -53,4 +53,4 @@ jobs:
           git add looper.txt
           git commit -as -m "Looping at $(date -u +%D-%T%P)"
           git push -f origin main
-          git push -q https://${{ secrets.GH_TOKEN }}@github.com/${GITHUB_REPOSITORY} HEAD:main"
+          git push -q https://${{ secrets.GH_TOKEN }}@github.com/${GITHUB_REPOSITORY} HEAD:main
