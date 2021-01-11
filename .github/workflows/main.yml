@@ -36,13 +36,15 @@ jobs:
         run: |
           cd source || exit 1
           docker container prune --force || true
-          docker build . --rm --force-rm --compress --no-cache=true --pull --file Dockerfile -t mirror-bot
+          echo "$DOCKERHUB_TOKEN" | docker login -u $DOCKER_USERNAME --password-stdin &>/dev/null
+          docker build . --rm --force-rm --compress --no-cache=true --pull --file Dockerfile -t $DOCKER_USERNAME/mirror-bot:latest
           docker image ls
+          docker push $DOCKER_USERNAME/mirror-bot:latest
       - name: Run The Mirroring Docker Container
         continue-on-error: true
         timeout-minutes: 340
         run: |
-          docker run --privileged --rm -i mirror-bot
+          docker run --privileged --rm -i $DOCKER_USERNAME/mirror-bot:latest
       - name: Self Checkout, Again For Looping
         run: |
           git clone https://${GitHubName}:${{ secrets.GH_TOKEN }}@github.com/${GITHUB_REPOSITORY} loop
