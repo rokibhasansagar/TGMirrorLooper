@@ -42,7 +42,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/mirror-bot:latest
       - name: Run The Mirroring Docker Container
         continue-on-error: true
-        timeout-minutes: 340
+        timeout-minutes: 320
         run: |
           docker run --privileged --rm -i ${{ secrets.DOCKER_USERNAME }}/mirror-bot:latest
       - name: Self Checkout, Again For Looping
