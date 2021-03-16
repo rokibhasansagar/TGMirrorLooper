@@ -42,10 +42,11 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/mirror-bot:latest
       - name: Run The Mirroring Docker Container
         continue-on-error: true
-        timeout-minutes: 320
+        timeout-minutes: 310
         run: |
           cd /home/runner/magnetoBot || exit 1
-          docker run --privileged --rm -i ${{ secrets.DOCKER_USERNAME }}/mirror-bot:latest
+          docker run --privileged --rm -i ${{ secrets.DOCKER_USERNAME }}/mirror-bot:latest || exit 1
       - name: Trigger The Looper
+        continue-on-error: true
         run: |
           curl -X POST --header "Authorization: token ${{ secrets.GH_TOKEN }}" https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/main.yml/dispatches -d '{"ref":"main"}'
