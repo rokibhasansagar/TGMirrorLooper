@@ -39,10 +39,12 @@ jobs:
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin &>/dev/null
           docker build . --rm --force-rm --compress --no-cache=true --pull --file Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/mirror-bot:latest
           docker image ls
+          docker rmi -f $(docker images --format "{{.ID}}@{{.Repository}}:{{.Tag}}" | grep -v "mirror-bot:latest" | cut -d@ -f1)
+          df -hlT /
           docker push ${{ secrets.DOCKER_USERNAME }}/mirror-bot:latest
       - name: Run The Mirroring Docker Container
         continue-on-error: true
-        timeout-minutes: 310
+        timeout-minutes: 320
         run: |
           cd /home/runner/magnetoBot || exit 1
           docker run --privileged --rm -i ${{ secrets.DOCKER_USERNAME }}/mirror-bot:latest || exit 1
