@@ -32,7 +32,7 @@ jobs:
       - name: Compile The Mirroring Docker Container
         run: |
           cd /home/runner/magnetoBot || exit 1
-          sed -i 's/lzzy12\/mega-sdk-python/fr3akyphantom\/megasdk-python-docker/g' Dockerfile
+          sed -i 's/iamliquidx\/megasdk/fr3akyphantom\/megasdk-python-docker/g' Dockerfile
           curl -sL https://gist.github.com/rokibhasansagar/${{ secrets.MagnetoConfigSlug }} -o config.env
           curl -sL https://gist.github.com/rokibhasansagar/${{ secrets.MagnetoCredsSlug }} -o credentials.json
           curl -sL https://gist.github.com/rokibhasansagar/${{ secrets.MagnetoPickleSlug }} | base64 --decode >> token.pickle
